@@ -1,0 +1,23 @@
+Acetylcholinesterase (AChE) ✅ (already done)
+
+GABA-gated chloride channel
+
+Voltage-gated sodium channel
+
+Chitin synthase
+
+DNA topoisomerase II
+
+Juvenile hormone receptor (Methoprene-tolerant
+
+| Target         | Ideal count |
+| -------------- | ----------- |
+| AChE           | 5–15        |
+| GABA           | 5–10        |
+| Sodium channel | 3–8         |
+| Others         | 3–5         |
+
+
+"acetylcholinesterase inhibitor" insect plant flavonoid
+
+Add MACCS fingerprint averaging
