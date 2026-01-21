@@ -2,7 +2,9 @@ Acetylcholinesterase (AChE) ✅ (already done)
 
 GABA-gated chloride channel
 
-Voltage-gated sodium channel
+Voltage-gated sodium channel(VTpase)
+
+ecdysone receptor
 
 Chitin synthase
 
