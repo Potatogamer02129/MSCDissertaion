@@ -21,3 +21,5 @@ Juvenile hormone receptor (Methoprene-tolerant
 "acetylcholinesterase inhibitor" insect plant flavonoid
 
 Add MACCS fingerprint averaging
+
+https://www.sciencedirect.com/science/article/pii/S1226861516306124#bb0175
