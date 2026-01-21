@@ -1,0 +1,7 @@
+# Ignore all virtual environments named 'venv' anywhere in the project
+**/venv/
+
+# Ignore other common python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
