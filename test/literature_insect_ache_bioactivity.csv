@@ -1,0 +1,32 @@
+Ligand_Name,SMILES,Target,Species,IC50_Value,IC50_Unit,Assay_Type,Reference
+Quercetagetin-7-O-(6-O-caffeoyl-β-D-glucopyranoside),SMILES_TODO,Acetylcholinesterase,Spodoptera litura,12.08,ug/mL,Ellman assay,DOI:10.1016/j.pestbp.2020.104701
+Quercetagetin-7-O-(6-O-caffeoyl-β-D-glucopyranoside),SMILES_TODO,Acetylcholinesterase,Caenorhabditis elegans,12.54,ug/mL,Ellman assay,DOI:10.1016/j.pestbp.2020.104701
+
+Quercetagetin-7-O-(6-O-p-coumaroyl-β-D-glucopyranoside),SMILES_TODO,Acetylcholinesterase,Spodoptera litura,15.01,ug/mL,Ellman assay,DOI:10.1016/j.pestbp.2020.104701
+Quercetagetin-7-O-(6-O-p-coumaroyl-β-D-glucopyranoside),SMILES_TODO,Acetylcholinesterase,Caenorhabditis elegans,16.92,ug/mL,Ellman assay,DOI:10.1016/j.pestbp.2020.104701
+
+4′-Methyl quercetagetin-7-O-(6-O-caffeoyl-β-D-glucopyranoside),SMILES_TODO,Acetylcholinesterase,Spodoptera litura,17.85,ug/mL,Ellman assay,DOI:10.1016/j.pestbp.2020.104701
+4′-Methyl quercetagetin-7-O-(6-O-caffeoyl-β-D-glucopyranoside),SMILES_TODO,Acetylcholinesterase,Caenorhabditis elegans,17.12,ug/mL,Ellman assay,DOI:10.1016/j.pestbp.2020.104701
+
+Kaempferol,O=C1C(O)=C(O)C2=CC(O)=CC(O)=C2O1,Acetylcholinesterase,Caenorhabditis elegans,24.92,ug/mL,Ellman assay,DOI:10.1016/j.pestbp.2020.104701
+
+5,4′-Dihydroxyflavone,O=C1C=CC2=CC(O)=CC(O)=C2O1,Acetylcholinesterase,Spodoptera litura,28.63,ug/mL,Ellman assay,DOI:10.1016/j.pestbp.2020.104701
+5,4′-Dihydroxyflavone,O=C1C=CC2=CC(O)=CC(O)=C2O1,Acetylcholinesterase,Caenorhabditis elegans,39.91,ug/mL,Ellman assay,DOI:10.1016/j.pestbp.2020.104701
+
+Naringenin,O=C1CC(C2=CC(O)=C(O)C=C2)OC1,Acetylcholinesterase,Caenorhabditis elegans,45.23,ug/mL,Ellman assay,DOI:10.1016/j.pestbp.2020.104701
+
+Chrysoeriol,COC1=CC(O)=C2C(=O)C(O)=COC2=C1,Acetylcholinesterase,Spodoptera litura,55.08,ug/mL,Ellman assay,DOI:10.1016/j.pestbp.2020.104701
+
+Chrysoplenetin,COC1=CC(O)=C2C(=O)C(O)=COC2=C1OC,Acetylcholinesterase,Spodoptera litura,86.01,ug/mL,Ellman assay,DOI:10.1016/j.pestbp.2020.104701
+
+Quercetin-3-O-β-D-glucopyranoside,SMILES_TODO,Acetylcholinesterase,Spodoptera litura,55.09,ug/mL,Ellman assay,DOI:10.1016/j.pestbp.2020.104701
+
+Kaempferol-3-O-β-D-glucopyranoside,SMILES_TODO,Acetylcholinesterase,Spodoptera litura,63.96,ug/mL,Ellman assay,DOI:10.1016/j.pestbp.2020.104701
+
+Rutin,SMILES_TODO,Acetylcholinesterase,Spodoptera litura,82.27,ug/mL,Ellman assay,DOI:10.1016/j.pestbp.2020.104701
+
+Fortunellin,SMILES_TODO,Acetylcholinesterase,Caenorhabditis elegans,67.56,ug/mL,Ellman assay,DOI:10.1016/j.pestbp.2020.104701
+
+3-Hydroxyphloridzin,SMILES_TODO,Acetylcholinesterase,Spodoptera litura,49.67,ug/mL,Ellman assay,DOI:10.1016/j.pestbp.2020.104701
+
+Methylenebisphloridzin,SMILES_TODO,Acetylcholinesterase,Spodoptera litura,50.19,ug/mL,Ellman assay,DOI:10.1016/j.pestbp.2020.104701
