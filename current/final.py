@@ -149,30 +149,30 @@ cutoff = st.slider(
 # Run prediction
 # =========================
 if st.button("Predict insect targets"):
+
     if not query_smiles.strip():
         st.warning("Please enter a SMILES string.")
     else:
+
+        # ---- Run both models independently ----
         results, error = predict_targets(query_smiles, chembl_df, cutoff)
+        bonus, lit_hit = ache_literature_bonus(query_smiles, literature_df)
 
         if error:
             st.error(error)
 
-        elif results.empty:
-            st.info(
-                "No insect protein targets found above the selected similarity cutoff."
-            )
+        # --------------------------------------------
+        # CASE 1: ChEMBL matches exist
+        # --------------------------------------------
+        elif results is not None and not results.empty:
 
-        else:
-            # Confidence
             results["Confidence"] = results.apply(confidence_label, axis=1)
-
-            # Literature bonus
-            bonus, lit_hit = ache_literature_bonus(query_smiles, literature_df)
             results["Literature bonus"] = 0.0
 
             ache_mask = results["Target name"].str.contains(
                 "acetylcholinesterase", case=False
             )
+
             results.loc[ache_mask, "Literature bonus"] = bonus
 
             results["Final score"] = (
@@ -184,25 +184,54 @@ if st.button("Predict insect targets"):
                 results.sort_values("Final score", ascending=False)
             )
 
-            # Show literature evidence separately
-            if lit_hit is not None:
-                st.subheader("📚 Supporting literature evidence (AChE)")
-                st.markdown(
-                    f"""
-                    **Matched compound:** {lit_hit['Ligand_Name']}  
-                    **Similarity:** {round(TanimotoSimilarity(
-                        AllChem.GetMorganFingerprintAsBitVect(
-                            Chem.MolFromSmiles(query_smiles), 2, 2048
-                        ),
-                        lit_hit['FP']
-                    ), 3)}  
-                    **Evidence:** {lit_hit['Evidence_Type']}  
-                    **Citation:** {lit_hit['Reference']}
-                    """
-                )
+        # --------------------------------------------
+        # CASE 2: No ChEMBL match but literature match
+        # --------------------------------------------
+        elif lit_hit is not None:
 
-            st.caption(
-                "⚠️ Predictions are based on chemical similarity and literature support. "
-                "They do not imply confirmed binding or bioactivity."
+            st.subheader("📚 Literature-supported target (no ChEMBL similarity found)")
+
+            st.markdown(
+                f"""
+                **Ligand:** {lit_hit['Ligand_Name']}  
+                **Target:** {lit_hit['Target']}  
+                **Species:** {lit_hit['Species']}  
+                **Evidence:** {lit_hit['Evidence_Type']}  
+                **Reference:** {lit_hit['Reference']}
+                """
             )
+
+        # --------------------------------------------
+        # CASE 3: Nothing found anywhere
+        # --------------------------------------------
+        else:
+            st.info(
+                "No insect protein targets found in ChEMBL or manual literature above similarity threshold."
+            )
+
+        # --------------------------------------------
+        # Show literature similarity details if hit
+        # --------------------------------------------
+        if lit_hit is not None:
+
+            qmol = Chem.MolFromSmiles(query_smiles)
+            qfp = AllChem.GetMorganFingerprintAsBitVect(qmol, 2, 2048)
+
+            sim_value = TanimotoSimilarity(qfp, lit_hit["FP"])
+
+            st.subheader("📖 Closest literature compound")
+            st.markdown(
+                f"""
+                **Matched compound:** {lit_hit['Ligand_Name']}  
+                **Target:** {lit_hit['Target']}  
+                **Similarity:** {round(sim_value, 3)}  
+                **Evidence:** {lit_hit['Evidence_Type']}  
+                **Reference:** {lit_hit['Reference']}
+                """
+            )
+
+        st.caption(
+            "⚠️ Predictions are based on chemical similarity and literature support. "
+            "They do not imply confirmed binding or bioactivity."
+        )
 

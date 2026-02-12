@@ -5,6 +5,7 @@ from rdkit import Chem
 from rdkit.Chem import AllChem
 from rdkit.DataStructs import TanimotoSimilarity
 
+
 # =========================
 # App configuration
 # =========================
@@ -15,48 +16,59 @@ st.set_page_config(
 
 st.title("🦟 Insect Protein Target Prediction")
 st.write(
-    "Ligand-based prediction of **probable insect protein targets** "
+    "Ligand-based prediction of probable insect protein targets "
     "using chemical similarity to known insect bioactive compounds."
 )
 
+
 # =========================
-# Load ChEMBL insect dataset
+# Load ChEMBL dataset
 # =========================
 @st.cache_data
 def load_chembl_dataset():
     df = pd.read_csv("insect_ligand_targets_raw.csv")
+
     df["Mol"] = df["Ligand_SMILES"].apply(Chem.MolFromSmiles)
     df = df[df["Mol"].notnull()]
+
     df["FP"] = df["Mol"].apply(
         lambda m: AllChem.GetMorganFingerprintAsBitVect(m, 2, 2048)
     )
+
     return df
 
+
 # =========================
-# Load literature AChE dataset
+# Load literature dataset (manual)
 # =========================
 @st.cache_data
 def load_literature_dataset():
     df = pd.read_csv("literature_insect_bioactivity.csv")
+
     df["Mol"] = df["SMILES"].apply(Chem.MolFromSmiles)
     df = df[df["Mol"].notnull()]
+
     df["FP"] = df["Mol"].apply(
         lambda m: AllChem.GetMorganFingerprintAsBitVect(m, 2, 2048)
     )
+
     return df
+
 
 chembl_df = load_chembl_dataset()
 literature_df = load_literature_dataset()
 
 st.success(
-    f"Loaded {chembl_df['Ligand_SMILES'].nunique()} ChEMBL ligands "
-    f"and {literature_df.shape[0]} literature-curated compounds"
+    f"Loaded {chembl_df.shape[0]} ChEMBL ligands "
+    f"and {literature_df.shape[0]} literature compounds"
 )
 
+
 # =========================
-# Core target prediction
+# Core ChEMBL prediction
 # =========================
 def predict_targets(query_smiles, reference_df, cutoff=0.3):
+
     mol = Chem.MolFromSmiles(query_smiles)
     if mol is None:
         return None, "Invalid SMILES string."
@@ -64,11 +76,13 @@ def predict_targets(query_smiles, reference_df, cutoff=0.3):
     qfp = AllChem.GetMorganFingerprintAsBitVect(mol, 2, 2048)
     results = []
 
-    for target, group in reference_df.groupby("Target_UniProt"):
+    for target, group in reference_df.groupby("Target"):
+
         sims = []
 
         for rfp in group["FP"]:
             sim = TanimotoSimilarity(qfp, rfp)
+
             if sim >= cutoff:
                 sims.append(sim)
 
@@ -77,7 +91,7 @@ def predict_targets(query_smiles, reference_df, cutoff=0.3):
             score = len(sims) * mean_sim
 
             results.append({
-                "Target name": group["Target_Name"].iloc[0],
+                "Target": target,
                 "Species": group["Species"].iloc[0],
                 "Matched ligands": len(sims),
                 "Mean similarity": round(mean_sim, 3),
@@ -94,20 +108,24 @@ def predict_targets(query_smiles, reference_df, cutoff=0.3):
         None
     )
 
+
 # =========================
 # Literature AChE bonus
 # =========================
 def ache_literature_bonus(query_smiles, literature_df):
+
     mol = Chem.MolFromSmiles(query_smiles)
     if mol is None:
         return 0.0, None
 
     qfp = AllChem.GetMorganFingerprintAsBitVect(mol, 2, 2048)
+
     best_sim = 0
     best_row = None
 
     for _, row in literature_df.iterrows():
         sim = TanimotoSimilarity(qfp, row["FP"])
+
         if sim > best_sim:
             best_sim = sim
             best_row = row
@@ -119,18 +137,22 @@ def ache_literature_bonus(query_smiles, literature_df):
     else:
         return 0.0, None
 
+
 # =========================
 # Confidence labeling
 # =========================
 def confidence_label(row):
+
     if row["Matched ligands"] >= 5 and row["Mean similarity"] >= 0.35:
         return "Medium"
+
     return "Low"
+
 
 # =========================
 # User input
 # =========================
-st.subheader("🔬 Query compound")
+st.subheader("Query compound")
 
 query_smiles = st.text_input(
     "Enter compound SMILES",
@@ -145,12 +167,15 @@ cutoff = st.slider(
     step=0.05
 )
 
+
 # =========================
 # Run prediction
 # =========================
 if st.button("Predict insect targets"):
+
     if not query_smiles.strip():
         st.warning("Please enter a SMILES string.")
+
     else:
         results, error = predict_targets(query_smiles, chembl_df, cutoff)
 
@@ -163,46 +188,58 @@ if st.button("Predict insect targets"):
             )
 
         else:
-            # Confidence
-            results["Confidence"] = results.apply(confidence_label, axis=1)
 
-            # Literature bonus
-            bonus, lit_hit = ache_literature_bonus(query_smiles, literature_df)
+            results["Confidence"] = results.apply(
+                confidence_label, axis=1
+            )
+
+            # Apply literature bonus ONLY to AChE rows
+            bonus, lit_hit = ache_literature_bonus(
+                query_smiles, literature_df
+            )
+
             results["Literature bonus"] = 0.0
 
-            ache_mask = results["Target name"].str.contains(
+            ache_mask = results["Target"].str.contains(
                 "acetylcholinesterase", case=False
             )
+
             results.loc[ache_mask, "Literature bonus"] = bonus
 
             results["Final score"] = (
-                results["ChEMBL score"] + results["Literature bonus"]
+                results["ChEMBL score"] +
+                results["Literature bonus"]
             )
 
-            st.subheader("📊 Predicted insect protein targets")
+            st.subheader("Predicted insect protein targets")
+
             st.dataframe(
                 results.sort_values("Final score", ascending=False)
             )
 
             # Show literature evidence separately
             if lit_hit is not None:
-                st.subheader("📚 Supporting literature evidence (AChE)")
+
+                st.subheader("Supporting literature evidence (AChE)")
+
+                sim_val = TanimotoSimilarity(
+                    AllChem.GetMorganFingerprintAsBitVect(
+                        Chem.MolFromSmiles(query_smiles), 2, 2048
+                    ),
+                    lit_hit["FP"]
+                )
+
                 st.markdown(
                     f"""
-                    **Matched compound:** {lit_hit['Ligand_Name']}  
-                    **Similarity:** {round(TanimotoSimilarity(
-                        AllChem.GetMorganFingerprintAsBitVect(
-                            Chem.MolFromSmiles(query_smiles), 2, 2048
-                        ),
-                        lit_hit['FP']
-                    ), 3)}  
-                    **Evidence:** {lit_hit['Evidence_Type']}  
-                    **Citation:** {lit_hit['Reference']}
-                    """
+**Matched compound:** {lit_hit['Ligand_Name']}  
+**Similarity:** {round(sim_val, 3)}  
+**Evidence:** {lit_hit['Evidence_Type']}  
+**Reference:** {lit_hit['Reference']}
+"""
                 )
 
             st.caption(
-                "⚠️ Predictions are based on chemical similarity and literature support. "
+                "Predictions are based on chemical similarity and literature support. "
                 "They do not imply confirmed binding or bioactivity."
             )
 
