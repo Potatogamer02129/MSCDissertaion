@@ -72,7 +72,7 @@ with col1:
     """)
     st.write("") # Spacer
     # Streamlit's native page linker
-    st.page_link("pages/01_ChEMBL_Target_Search.py", label="Open Target Search", icon="🔍")
+    st.page_link("pages/01_Target_Search.py", label="Open Target Search", icon="🔍")
 
 with col2:
     st.subheader("🧬 Module 2: Homology Modeler")
