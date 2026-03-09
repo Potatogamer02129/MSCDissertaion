@@ -1,6 +1,6 @@
 # Ignore all virtual environments named 'venv' anywhere in the project
 **/venv/
-
+**/Newvenv/
 # Ignore other common python artifacts
 __pycache__/
 *.py[cod]
